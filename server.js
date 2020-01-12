@@ -8,6 +8,14 @@ const topicsRouter = require('./routes/topics')
 // Create a new Express app and add utilities
 const app = express()
 app.use(express.json())
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000')
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  )
+  next()
+})
 
 // Connect to mongoDB
 const uri = process.env.MONGO_URI
@@ -19,12 +27,6 @@ const db = mongoose.connection
 db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to MongoDB database'))
 
-// Set up Auth0 configuration
-const authConfig = {
-  domain: process.env.AUTH0_DOMAIN,
-  audience: process.env.AUTH0_AUDIENCE
-}
-
 // Define middleware that validates incoming bearer tokens
 // using JWKS from dev-piqi36-y.eu.auth0.com
 const checkJwt = jwt({
@@ -32,11 +34,11 @@ const checkJwt = jwt({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: `https://${authConfig.domain}/.well-known/jwks.json`
+    jwksUri: `https://${process.env.AUTH0_DOMAIN}/.well-known/jwks.json`
   }),
 
-  audience: authConfig.audience,
-  issuer: `https://${authConfig.domain}/`,
+  audience: process.env.AUTH0_AUDIENCE,
+  issuer: `https://${process.env.AUTH0_DOMAIN}/`,
   algorithm: ['RS256']
 })
 
