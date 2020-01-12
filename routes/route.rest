@@ -1,0 +1,18 @@
+GET http://localhost:3001/topics
+
+###
+
+GET http://localhost:3001/topics/1
+
+###
+
+GET http://localhost:3001/topics/5e1b8f79be14f16f79cf3648
+
+###
+
+POST http://localhost:3001/topics
+Content-Type: application/json
+
+{
+  "shortTitle": "fix google bug"
+}
